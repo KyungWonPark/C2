@@ -2,6 +2,7 @@ package calc
 
 import (
 	"math"
+	"runtime"
 	"sync"
 )
 
@@ -38,11 +39,11 @@ func sigmoid(linBuf1 *LinBuffer, linBuf0 *LinBuffer, linStat0 *LinStat, order <-
 }
 
 func doSigmoid(linBuf1 *LinBuffer, linBuf0 *LinBuffer, linStat0 *LinStat) {
-	order := make(chan int, numWorkers)
+	order := make(chan int, runtime.NumCPU())
 
 	var wg sync.WaitGroup
 
-	for i := 0; i < numWorkers; i++ {
+	for i := 0; i < runtime.NumCPU(); i++ {
 		go sigmoid(linBuf1, linBuf0, linStat0, order, &wg)
 	}
 

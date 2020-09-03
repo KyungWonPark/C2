@@ -2,6 +2,7 @@ package calc
 
 import (
 	"math"
+	"runtime"
 	"sync"
 )
 
@@ -35,9 +36,9 @@ func zScoring(linBuf0 *LinBuffer, linBuf1 *LinBuffer, order <-chan int, wg *sync
 }
 
 func doZScoring(linBuf0 *LinBuffer, linBuf1 *LinBuffer) {
-	order := make(chan int, numWorkers)
+	order := make(chan int, runtime.NumCPU())
 	var wg sync.WaitGroup
-	for i := 0; i < numWorkers; i++ {
+	for i := 0; i < runtime.NumCPU(); i++ {
 		go zScoring(linBuf0, linBuf1, order, &wg)
 	}
 

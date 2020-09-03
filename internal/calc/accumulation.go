@@ -1,6 +1,9 @@
 package calc
 
-import "sync"
+import (
+	"runtime"
+	"sync"
+)
 
 func accumulation(matBuf0 *MatBuffer, matBuf1 *MatBuffer, order <-chan int, wg *sync.WaitGroup) {
 	for {
@@ -20,11 +23,11 @@ func accumulation(matBuf0 *MatBuffer, matBuf1 *MatBuffer, order <-chan int, wg *
 }
 
 func doAccumulation(matBuf0 *MatBuffer, matBuf1 *MatBuffer) {
-	order := make(chan int, numWorkers)
+	order := make(chan int, runtime.NumCPU())
 
 	var wg sync.WaitGroup
 
-	for i := 0; i < numWorkers; i++ {
+	for i := 0; i < runtime.NumCPU(); i++ {
 		go accumulation(matBuf0, matBuf1, order, &wg)
 	}
 

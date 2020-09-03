@@ -1,6 +1,9 @@
 package calc
 
-import "sync"
+import (
+	"runtime"
+	"sync"
+)
 
 func average(matBuf1 *MatBuffer, n float32, mins *[13362]float32, maxs *[13362]float32, order <-chan int, wg *sync.WaitGroup) {
 	for {
@@ -34,14 +37,14 @@ func average(matBuf1 *MatBuffer, n float32, mins *[13362]float32, maxs *[13362]f
 
 // return min, and max value
 func doAverage(matBuf1 *MatBuffer, n float32) (float32, float32) {
-	order := make(chan int, numWorkers)
+	order := make(chan int, runtime.NumCPU())
 
 	var wg sync.WaitGroup
 
 	var mins [13362]float32
 	var maxs [13362]float32
 
-	for i := 0; i < numWorkers; i++ {
+	for i := 0; i < runtime.NumCPU(); i++ {
 		go average(matBuf1, n, &mins, &maxs, order, &wg)
 	}
 

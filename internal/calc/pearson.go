@@ -1,6 +1,7 @@
 package calc
 
 import (
+	"runtime"
 	"sync"
 )
 
@@ -37,11 +38,11 @@ func pearson(linBuf0 *LinBuffer, linStat0 *LinStat, matBuf0 *MatBuffer, order <-
 }
 
 func doPearson(linBuf0 *LinBuffer, linStat0 *LinStat, matBuf0 *MatBuffer) {
-	order := make(chan int, numWorkers)
+	order := make(chan int, runtime.NumCPU())
 
 	var wg sync.WaitGroup
 
-	for i := 0; i < numWorkers; i++ {
+	for i := 0; i < runtime.NumCPU(); i++ {
 		go pearson(linBuf0, linStat0, matBuf0, order, &wg)
 	}
 
