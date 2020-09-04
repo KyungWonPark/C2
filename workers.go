@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/KyungWonPark/C2/internal/calc"
@@ -41,6 +42,9 @@ func compute(buffer ringBuffer, bufferCh <-chan int, matBuffer [][13362]float32,
 	for {
 		bufferIndex, ok := <-bufferCh
 		if ok {
+			if !buffer[bufferIndex].isEmpty {
+				log.Fatal("Ring Buffer: Something is wrong!")
+			}
 			timeSeries := buffer[bufferIndex].data
 			// z-score
 			calc.DoZScoring(timeSeries, workerConfig)
@@ -51,8 +55,8 @@ func compute(buffer ringBuffer, bufferCh <-chan int, matBuffer [][13362]float32,
 			// pearson & accumulation
 			calc.DoPearson(timeSeries, stats, matBuffer)
 
-			buffer[bufferIndex].isEmpty = true
 			fmt.Printf("POP: popping from ring buffer: %s\n", strconv.Itoa(bufferIndex))
+			buffer[bufferIndex].isEmpty = true
 		} else {
 			break
 		}

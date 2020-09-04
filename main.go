@@ -82,6 +82,25 @@ func main() {
 
 	compute(buffer, bufferCh, matBuffer, &workerConfig)
 
+	calc.DoAverage(matBuffer, float32(len(fileList)))
+
 	fmt.Println("Finished Calculation.")
+
+	f, err := os.Create("output-matrix.bin")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	for i := range matBuffer {
+		for j := range matBuffer[i] {
+			fmt.Fprintf(f, "%.*e", 6, matBuffer[i][j])
+			if j != len(matBuffer[i])-1 {
+				fmt.Fprintf(f, ",")
+			}
+		}
+		fmt.Fprintf(f, "\n")
+	}
+
 	return
 }
