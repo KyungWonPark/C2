@@ -42,7 +42,7 @@ func compute(buffer ringBuffer, bufferCh <-chan int, matBuffer [][13362]float32,
 	for {
 		bufferIndex, ok := <-bufferCh
 		if ok {
-			if !buffer[bufferIndex].isEmpty {
+			if buffer[bufferIndex].isEmpty {
 				log.Fatal("Ring Buffer: Something is wrong!")
 			}
 			timeSeries := buffer[bufferIndex].data
