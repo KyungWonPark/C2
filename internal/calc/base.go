@@ -17,7 +17,7 @@ type LinStat [13362]LinStatEle
 
 // Config holds wokrder related configuration
 type Config struct {
-	numLoader     int
-	numComputer   int
-	numBufferSize int
+	NumLoader     int
+	NumComputer   int
+	NumBufferSize int
 }

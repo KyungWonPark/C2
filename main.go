@@ -8,21 +8,17 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-)
 
-type config struct {
-	numLoader     int
-	numComputer   int
-	numBufferSize int
-}
+	"github.com/KyungWonPark/C2/internal/calc"
+)
 
 func init() {
 	// Worker number setting
-	var workerConfig config
+	var workerConfig calc.Config
 
-	workerConfig.numLoader = 4
-	workerConfig.numComputer = runtime.NumCPU() - workerConfig.numLoader + 2
-	workerConfig.numBufferSize = 8
+	workerConfig.NumLoader = 4
+	workerConfig.NumComputer = runtime.NumCPU() - workerConfig.NumLoader + 2
+	workerConfig.NumBufferSize = 8
 
 	// Sampling setting
 	for z := 0; z < 2; z++ {
