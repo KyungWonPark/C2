@@ -14,3 +14,10 @@ type LinStatEle struct {
 
 // LinStat holds statistics for 13362 voxel points
 type LinStat [13362]LinStatEle
+
+// Config holds wokrder related configuration
+type Config struct {
+	numLoader     int
+	numComputer   int
+	numBufferSize int
+}

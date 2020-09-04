@@ -1,10 +1,22 @@
 package main
 
 import (
+	"runtime"
 	"sync"
 
 	"github.com/KyungWonPark/nifti"
 )
+
+// Voxel represents fMRI voxel coordinates
+type Voxel struct {
+	x int
+	y int
+	z int
+}
+
+var fileList []string
+var convKernel [3][3][3]float32
+var greyVoxels [13362]Voxel
 
 func convolution(img *nifti.Nifti1Image, timePoint int, seed Voxel) float32 {
 	var value float32
@@ -21,13 +33,13 @@ func convolution(img *nifti.Nifti1Image, timePoint int, seed Voxel) float32 {
 	return value / 8
 }
 
-func sampling(img *nifti.Nifti1Image, order <-chan int, wg *sync.WaitGroup, outBuffer *LinBuffer) {
+func sampling(img *nifti.Nifti1Image, order <-chan int, wg *sync.WaitGroup, timeSeries [][600]float32) {
 	for {
 		timePoint, ok := <-order
 		if ok {
 			for i, vox := range greyVoxels {
 				seed := Voxel{1 + 2*vox.x, 1 + 2*vox.y, 2 + 2*vox.z}
-				outBuffer[i][timePoint-300] = convolution(img, timePoint, seed)
+				timeSeries[i][timePoint-300] = convolution(img, timePoint, seed)
 			}
 			wg.Done()
 		} else {
@@ -38,14 +50,14 @@ func sampling(img *nifti.Nifti1Image, order <-chan int, wg *sync.WaitGroup, outB
 	return
 }
 
-func doSampling(path string, outBuffer *LinBuffer) {
+func doSampling(path string, timeSeries [][600]float32) {
 	var img nifti.Nifti1Image
 	img.LoadImage(path, true)
 
-	order := make(chan int, numWorkers)
+	order := make(chan int, runtime.NumCPU())
 	var wg sync.WaitGroup
-	for i := 0; i < numWorkers; i++ {
-		go sampling(&img, order, &wg, outBuffer)
+	for i := 0; i < runtime.NumCPU(); i++ {
+		go sampling(&img, order, &wg, timeSeries)
 	}
 
 	wg.Add(600)
