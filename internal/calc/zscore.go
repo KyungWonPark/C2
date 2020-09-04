@@ -2,18 +2,17 @@ package calc
 
 import (
 	"math"
-	"runtime"
 	"sync"
 )
 
-func zScoring(linBuf0 *LinBuffer, linBuf1 *LinBuffer, order <-chan int, wg *sync.WaitGroup) {
+func zScoring(timeSeries [][600]float32, order <-chan int, wg *sync.WaitGroup) {
 	for {
 		index, ok := <-order
 		if ok {
 			var valAcc float32
 			var sqrAcc float32
 
-			for _, value := range linBuf0[index] {
+			for _, value := range timeSeries[index] {
 				valAcc += value
 				sqrAcc += value * value
 			}
@@ -22,8 +21,8 @@ func zScoring(linBuf0 *LinBuffer, linBuf1 *LinBuffer, order <-chan int, wg *sync
 			sqrMean := sqrAcc / 600
 			stddev := float32(math.Sqrt(float64(sqrMean) - float64(avg*avg)))
 
-			for i, value := range linBuf0[index] {
-				linBuf1[index][i] = (value - avg) / stddev
+			for i, value := range timeSeries[index] {
+				timeSeries[index][i] = (value - avg) / stddev
 			}
 
 			wg.Done()
@@ -35,11 +34,13 @@ func zScoring(linBuf0 *LinBuffer, linBuf1 *LinBuffer, order <-chan int, wg *sync
 	return
 }
 
-func doZScoring(linBuf0 *LinBuffer, linBuf1 *LinBuffer) {
-	order := make(chan int, runtime.NumCPU())
+func doZScoring(timeSeries [][600]float32, workerConfig *Config) {
+	numWorkers := (*workerConfig).NumComputer
+
+	order := make(chan int, numWorkers)
 	var wg sync.WaitGroup
-	for i := 0; i < runtime.NumCPU(); i++ {
-		go zScoring(linBuf0, linBuf1, order, &wg)
+	for i := 0; i < numWorkers; i++ {
+		go zScoring(timeSeries, order, &wg)
 	}
 
 	wg.Add(13362)

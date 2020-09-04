@@ -4,6 +4,7 @@ import (
 	"runtime"
 	"sync"
 
+	"github.com/KyungWonPark/C2/internal/calc"
 	"github.com/KyungWonPark/nifti"
 )
 
@@ -50,7 +51,7 @@ func sampling(img *nifti.Nifti1Image, order <-chan int, wg *sync.WaitGroup, time
 	return
 }
 
-func doSampling(path string, timeSeries [][600]float32) {
+func doSampling(path string, timeSeries [][600]float32, workerConfig *calc.Config) {
 	var img nifti.Nifti1Image
 	img.LoadImage(path, true)
 
