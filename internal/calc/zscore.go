@@ -34,7 +34,8 @@ func zScoring(timeSeries [][600]float32, order <-chan int, wg *sync.WaitGroup) {
 	return
 }
 
-func doZScoring(timeSeries [][600]float32, workerConfig *Config) {
+// DoZScoring does z-scoring
+func DoZScoring(timeSeries [][600]float32, workerConfig *Config) {
 	numWorkers := (*workerConfig).NumComputer
 
 	order := make(chan int, numWorkers)

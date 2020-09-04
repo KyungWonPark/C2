@@ -37,7 +37,8 @@ func pearson(timeSeries [][600]float32, stats []LinStatEle, matBuffer [][13362]f
 	return
 }
 
-func doPearson(timeSeries [][600]float32, stats []LinStatEle, matBuffer [][13362]float32) {
+// DoPearson does Pearson's correlation calculation
+func DoPearson(timeSeries [][600]float32, stats []LinStatEle, matBuffer [][13362]float32) {
 	order := make(chan int, runtime.NumCPU())
 
 	var wg sync.WaitGroup

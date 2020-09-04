@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"math"
 	"os"
@@ -13,13 +14,6 @@ import (
 )
 
 func init() {
-	// Worker number setting
-	var workerConfig calc.Config
-
-	workerConfig.NumLoader = 4
-	workerConfig.NumComputer = runtime.NumCPU() - workerConfig.NumLoader + 2
-	workerConfig.NumBufferSize = 8
-
 	// Sampling setting
 	for z := 0; z < 2; z++ {
 		for y := 0; y < 2; y++ {
@@ -68,5 +62,26 @@ func init() {
 }
 
 func main() {
+	// Worker number setting
+	var workerConfig calc.Config
+
+	workerConfig.NumLoader = 4
+	workerConfig.NumComputer = runtime.NumCPU() - workerConfig.NumLoader + 2
+	workerConfig.NumBufferSize = 8
+
+	// Prepare matBuffer
+	matBuffer := make([][13362]float32, 13362)
+	buffer := make(ringBuffer, workerConfig.NumBufferSize)
+	for i := range buffer {
+		buffer[i].isEmpty = true
+		buffer[i].data = make([][600]float32, 13362)
+	}
+	bufferCh := make(chan int, workerConfig.NumBufferSize)
+
+	go load(fileList, buffer, bufferCh, &workerConfig)
+
+	compute(buffer, bufferCh, matBuffer, &workerConfig)
+
+	fmt.Println("Finished Calculation.")
 	return
 }

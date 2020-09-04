@@ -41,8 +41,13 @@ func compute(buffer ringBuffer, bufferCh <-chan int, matBuffer [][13362]float32,
 		if ok {
 			timeSeries := buffer[bufferIndex].data
 			// z-score
+			calc.DoZScoring(timeSeries, workerConfig)
+
 			// sigmoid
+			calc.DoSigmoid(timeSeries, stats, workerConfig)
+
 			// pearson & accumulation
+			calc.DoPearson(timeSeries, stats, matBuffer)
 
 			buffer[bufferIndex].isEmpty = true
 		} else {

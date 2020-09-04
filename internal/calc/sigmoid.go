@@ -37,7 +37,8 @@ func sigmoid(timeSeries [][600]float32, stats []LinStatEle, order <-chan int, wg
 	return
 }
 
-func doSigmoid(timeSeries [][600]float32, stats []LinStatEle, workerConfig *Config) {
+// DoSigmoid does sigmoid operation
+func DoSigmoid(timeSeries [][600]float32, stats []LinStatEle, workerConfig *Config) {
 	numWorkers := (*workerConfig).NumComputer
 
 	order := make(chan int, numWorkers)
