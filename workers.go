@@ -14,7 +14,7 @@ type ringBuffer []struct {
 
 func load(fileList []string, buffer ringBuffer, bufferCh chan<- int, workerConfig *calc.Config) {
 	bufferIndex := 0
-	dataDir := "/home/iksoochang2/kw-park/Data" + "fMRI-Smoothed/"
+	dataDir := "/home/iksoochang2/kw-park/Data/" + "fMRI-Smoothed/"
 
 	for i := 0; i < len(fileList); i++ {
 		if !buffer[bufferIndex].isEmpty {
