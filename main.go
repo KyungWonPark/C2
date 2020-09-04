@@ -24,7 +24,7 @@ func init() {
 		}
 	}
 
-	f, err := os.Open("file/greyList.txt")
+	f, err := os.Open("files/greyList.txt")
 	if err != nil {
 		log.Fatal("Failed to open greyList.txt file!", err)
 	}
