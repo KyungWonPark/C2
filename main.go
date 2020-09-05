@@ -86,7 +86,7 @@ func main() {
 
 	fmt.Println("Finished Calculation.")
 
-	f, err := os.Create("output-matrix.bin")
+	f, err := os.Create("output-matrix.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -94,12 +94,13 @@ func main() {
 
 	for i := range matBuffer {
 		for j := range matBuffer[i] {
+
 			fmt.Fprintf(f, "%.*e", 6, matBuffer[i][j])
 			if j != len(matBuffer[i])-1 {
-				fmt.Fprintf(f, ",")
+				fmt.Fprintf(f, "%s", ",")
 			}
 		}
-		fmt.Fprintf(f, "\n")
+		fmt.Fprintf(f, "%s", "\n")
 	}
 
 	return
