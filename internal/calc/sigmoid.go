@@ -13,7 +13,7 @@ func sigmoid(timeSeries [][600]float32, stats []LinStatEle, order <-chan int, wg
 			var sqrAcc float32
 
 			for i, value := range timeSeries[index] {
-				newVal := float32(2/(1+math.Exp(-float64(value))) - 1)
+				newVal := float32((2 / (1 + math.Exp(-float64(value)))) - 1)
 				valAcc += newVal
 				sqrAcc += newVal * newVal
 				timeSeries[index][i] = newVal

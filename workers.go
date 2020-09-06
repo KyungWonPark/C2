@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 
 	"github.com/KyungWonPark/C2/internal/calc"
@@ -15,7 +16,7 @@ type ringBuffer []struct {
 
 func load(fileList []string, buffer ringBuffer, bufferCh chan<- int, workerConfig *calc.Config) {
 	bufferIndex := 0
-	dataDir := "/home/iksoochang2/kw-park/Data/fMRI-Smoothed/"
+	dataDir := os.Getenv("Data") + "/fMRI-Smoothed/"
 
 	for i := 0; i < len(fileList); i++ {
 		if !buffer[bufferIndex].isEmpty {
@@ -54,6 +55,9 @@ func compute(buffer ringBuffer, bufferCh <-chan int, matBuffer [][13362]float32,
 
 			// pearson & accumulation
 			calc.DoPearson(timeSeries, stats, matBuffer)
+
+			// Check
+			calc.DoCheck(matBuffer, workerConfig)
 
 			fmt.Printf("POP: popping from ring buffer: %s\n", strconv.Itoa(bufferIndex))
 			buffer[bufferIndex].isEmpty = true

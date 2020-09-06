@@ -82,6 +82,8 @@ func main() {
 
 	compute(buffer, bufferCh, matBuffer, &workerConfig)
 
+	fmt.Printf("Averaging: %d samples.\n", len(fileList))
+
 	calc.DoAverage(matBuffer, float32(len(fileList)))
 
 	fmt.Println("Finished Calculation.")
