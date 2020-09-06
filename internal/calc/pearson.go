@@ -26,9 +26,9 @@ func pearson(timeSeries [][600]float32, stats []LinStatEle, matBuffer [][13362]f
 				pearson := cov / (stats[work].stddev * stats[i].stddev)
 
 				// Check
-				if pearson > 1 {
+				if pearson > 1.0001 {
 					fmt.Printf("ValErr: pearson[%d][%d] = %f is bigger than 1!\n", work, i, pearson)
-				} else if pearson < -1 {
+				} else if pearson < -1.0001 {
 					fmt.Printf("ValErr: pearson[%d][%d] = %f is smaller than -1!\n", work, i, pearson)
 				}
 
