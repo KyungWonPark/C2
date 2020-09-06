@@ -27,9 +27,9 @@ func pearson(timeSeries [][600]float32, stats []LinStatEle, matBuffer [][13362]f
 
 				// Check
 				if pearson > 1 {
-					fmt.Printf("ValErr: pearson[%d][%d] is bigger than 1!\n", work, i)
+					fmt.Printf("ValErr: pearson[%d][%d] = %f is bigger than 1!\n", work, i, pearson)
 				} else if pearson < 1 {
-					fmt.Printf("ValErr: pearson[%d][%d] is smaller than -1!\n", work, i)
+					fmt.Printf("ValErr: pearson[%d][%d] = %f is smaller than -1!\n", work, i, pearson)
 				}
 
 				matBuffer[work][i] += pearson
