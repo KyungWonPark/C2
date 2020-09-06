@@ -88,7 +88,8 @@ func main() {
 
 	fmt.Println("Finished Calculation.")
 
-	f, err := os.Create("output-matrix.txt")
+	path := os.Getenv("RESULT") + "/output-matrix.txt"
+	f, err := os.Create(path)
 	if err != nil {
 		log.Fatal(err)
 	}
