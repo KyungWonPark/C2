@@ -1,7 +1,6 @@
 package main
 
 import (
-	"runtime"
 	"sync"
 
 	"github.com/KyungWonPark/C2/internal/calc"
@@ -55,9 +54,9 @@ func doSampling(path string, timeSeries [][600]float32, workerConfig *calc.Confi
 	var img nifti.Nifti1Image
 	img.LoadImage(path, true)
 
-	order := make(chan int, runtime.NumCPU())
+	order := make(chan int, workerConfig.NumLoader)
 	var wg sync.WaitGroup
-	for i := 0; i < runtime.NumCPU(); i++ {
+	for i := 0; i < workerConfig.NumLoader; i++ {
 		go sampling(&img, order, &wg, timeSeries)
 	}
 
