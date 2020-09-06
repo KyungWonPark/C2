@@ -1,6 +1,7 @@
 package calc
 
 import (
+	"fmt"
 	"runtime"
 	"sync"
 )
@@ -23,6 +24,13 @@ func pearson(timeSeries [][600]float32, stats []LinStatEle, matBuffer [][13362]f
 				cov := (accProd / 600) - (stats[work].avg * stats[i].avg)
 
 				pearson := cov / (stats[work].stddev * stats[i].stddev)
+
+				// Check
+				if pearson > 1 {
+					fmt.Printf("ValErr: pearson[%d][%d] is bigger than 1!\n", work, i)
+				} else if pearson < 1 {
+					fmt.Printf("ValErr: pearson[%d][%d] is smaller than -1!\n", work, i)
+				}
 
 				matBuffer[work][i] += pearson
 				matBuffer[i][work] += pearson
