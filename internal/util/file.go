@@ -9,7 +9,7 @@ import (
 
 // MatWrite writes a matrix to text file
 func MatWrite(mat [][13362]float32, fileName string) {
-	path := os.Getenv("RESULT") + fileName + ".txt"
+	path := os.Getenv("RESULT") + "/" + fileName + ".txt"
 	f, err := os.Create(path)
 	if err != nil {
 		log.Fatal(err)
