@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 )
 
 // MatWrite writes a matrix to text file
@@ -19,9 +18,11 @@ func MatWrite(mat [][13362]float32, fileName string) {
 	for i := range mat {
 		var line string
 		for j := range mat[i] {
-			line += fmt.Sprintf("%.*e, ", 6, mat[i][j])
+			line += fmt.Sprintf("%.*e", 6, mat[i][j])
+			if j < len(mat[i])-1 {
+				line += ", "
+			}
 		}
-		line = strings.TrimSuffix(line, ",")
 		fmt.Fprintf(f, "%s\n", line)
 	}
 	return
