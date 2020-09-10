@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/KyungWonPark/C2/internal/calc"
+	"github.com/KyungWonPark/C2/internal/util"
 )
 
 func init() {
@@ -88,23 +89,7 @@ func main() {
 
 	fmt.Println("Finished Calculation.")
 
-	path := os.Getenv("RESULT") + "/output-matrix.txt"
-	f, err := os.Create(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-
-	for i := range matBuffer {
-		for j := range matBuffer[i] {
-
-			fmt.Fprintf(f, "%.*e", 6, matBuffer[i][j])
-			if j != len(matBuffer[i])-1 {
-				fmt.Fprintf(f, "%s", ",")
-			}
-		}
-		fmt.Fprintf(f, "%s", "\n")
-	}
+	util.MatWrite(matBuffer, "output-matrix")
 
 	return
 }
