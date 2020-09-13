@@ -9,9 +9,11 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"unsafe"
 
 	"github.com/KyungWonPark/C2/internal/calc"
 	"github.com/KyungWonPark/C2/internal/util"
+	"gonum.org/v1/gonum/mat"
 )
 
 func init() {
@@ -89,7 +91,16 @@ func main() {
 
 	fmt.Println("Finished Calculation.")
 
-	util.MatWrite(matBuffer, "output-matrix")
+	backend := make([]float64, 13362*13362)
+	afterThreshold := mat.NewSymDense(13362, backend)
+
+	calc.DoThresholding(matBuffer, afterThreshold, 0.3)
+
+	pPrintable := unsafe.Pointer(&backend[0])
+	printable := *(*[13362][13362]float64)(pPrintable)
+	output := printable[:]
+
+	util.MatWrite64(output, "output-matrix")
 
 	return
 }
