@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/KyungWonPark/C2/internal/calc"
-	"github.com/KyungWonPark/C2/internal/util"
 	"gonum.org/v1/gonum/blas/blas64"
 	"gonum.org/v1/gonum/mat"
 	blas_netlib "gonum.org/v1/netlib/blas/netlib"
@@ -113,14 +112,9 @@ func main() {
 		var eigVecs mat.Dense
 		eigSym.VectorsTo(&eigVecs)
 
-		smallestIdx := findNoneZeroSmallest(eigVals)
-		if smallestIdx == -1 {
-			fmt.Printf("Failed to find smallest eigVal for threshold: %f!\n", threshold)
-			continue
-		}
-
-		fileName := "eigVec-ele-thr-" + fmt.Sprintf("%f", threshold)
-		writeEigVec(&eigVecs, fileName, smallestIdx)
+		postFix := "-threshold-" + fmt.Sprintf("%f", threshold)
+		writeEntireEigenValue(eigVals, "eigenValue"+postFix)
+		writeEntireEigenVector(&eigVecs, "eigenVector"+postFix)
 
 		fmt.Printf("Processed thr: %f\n", threshold)
 	}
@@ -128,33 +122,39 @@ func main() {
 	return
 }
 
-func findNoneZeroSmallest(eigVals []float64) int {
-	var smallest float64
-	smallest = 1
-	smallestIdx := -1
-
-	for i, value := range eigVals {
-		if value == 0.0000000 {
-			continue
-		} else {
-			if value < smallest {
-				smallest = value
-				smallestIdx = i
-			}
-		}
+func writeEntireEigenValue(eigVals []float64, fileName string) {
+	path := os.Getenv("RESULT") + "/" + fileName + ".csv"
+	f, err := os.Create(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	for i := 0; i < 13362; i++ {
+		var line string
+		line += fmt.Sprintf("%.*e", 6, eigVals[i])
+		fmt.Fprintf(f, "%s\n", line)
 	}
 
-	return smallestIdx
+	return
 }
 
-func writeEigVec(eigVecs *mat.Dense, fileName string, smallestIdx int) {
-	eigVec := make([]float64, 13362)
-
-	for i := range eigVec {
-		eigVec[i] = eigVecs.At(i, smallestIdx)
+func writeEntireEigenVector(eigVecs *mat.Dense, fileName string) {
+	path := os.Getenv("RESULT") + "/" + fileName + ".csv"
+	f, err := os.Create(path)
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	util.VecWrite64(eigVec, fileName)
+	defer f.Close()
+	for i := 0; i < 13362; i++ {
+		var line string
+		for j := 0; j < 13362; j++ {
+			line += fmt.Sprintf("%.*e", 6, eigVecs.At(i, j))
+			if j < (13362 - 1) {
+				line += ", "
+			}
+		}
+		fmt.Fprintf(f, "%s\n", line)
+	}
 
 	return
 }

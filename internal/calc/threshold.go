@@ -11,7 +11,7 @@ func thresholding(matBuffer [][13362]float32, dest *mat.SymDense, threshold floa
 	for {
 		work, ok := <-order
 		if ok {
-			for i := range matBuffer[work] {
+			for i := work; i < 13362; i++ {
 				val := float64(matBuffer[work][i])
 				if val < threshold {
 					val = 0
