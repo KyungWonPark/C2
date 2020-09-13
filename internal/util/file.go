@@ -69,3 +69,23 @@ func MatWrite64(mat [][13362]float64, fileName string) {
 	}
 	return
 }
+
+// VecWrite64 writes vector to text file
+func VecWrite64(vec []float64, fileName string) {
+	path := os.Getenv("RESULT") + "/" + fileName + ".txt"
+	f, err := os.Create(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	for i := range vec {
+		var line string
+		line += fmt.Sprintf("%.*e", 6, vec[i])
+		if i < len(vec)-1 {
+			line += ", "
+		}
+		fmt.Fprintf(f, "%s\n", line)
+	}
+	return
+}

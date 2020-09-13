@@ -9,7 +9,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"unsafe"
 
 	"github.com/KyungWonPark/C2/internal/calc"
 	"github.com/KyungWonPark/C2/internal/util"
@@ -94,13 +93,63 @@ func main() {
 	backend := make([]float64, 13362*13362)
 	afterThreshold := mat.NewSymDense(13362, backend)
 
-	calc.DoThresholding(matBuffer, afterThreshold, 0.3)
+	thsArr := []float64{0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95}
 
-	pPrintable := unsafe.Pointer(&backend[0])
-	printable := *(*[13362][13362]float64)(pPrintable)
-	output := printable[:]
+	for _, threshold := range thsArr {
+		calc.DoThresholding(matBuffer, afterThreshold, threshold)
 
-	util.MatWrite64(output, "output-matrix")
+		var eigSym mat.EigenSym
+		ok := eigSym.Factorize(afterThreshold, true)
+		if !ok {
+			fmt.Printf("Failed to do eigen decomposition for threshold: %f!\n", threshold)
+		}
+
+		eigVals := eigSym.Values(nil)
+		var eigVecs mat.Dense
+		eigSym.VectorsTo(&eigVecs)
+
+		smallestIdx := findNoneZeroSmallest(eigVals)
+		if smallestIdx == -1 {
+			fmt.Printf("Failed to find smallest eigVal for threshold: %f!\n", threshold)
+			continue
+		}
+
+		fileName := "eigVec-ele-thr-" + fmt.Sprintf("%f", threshold)
+		writeEigVec(&eigVecs, fileName, smallestIdx)
+
+		fmt.Printf("Processed thr: %f\n", threshold)
+	}
+
+	return
+}
+
+func findNoneZeroSmallest(eigVals []float64) int {
+	var smallest float64
+	smallest = 1
+	smallestIdx := -1
+
+	for i, value := range eigVals {
+		if value == 0.0000000 {
+			continue
+		} else {
+			if value < smallest {
+				smallest = value
+				smallestIdx = i
+			}
+		}
+	}
+
+	return smallestIdx
+}
+
+func writeEigVec(eigVecs *mat.Dense, fileName string, smallestIdx int) {
+	eigVec := make([]float64, 13362)
+
+	for i := range eigVec {
+		eigVec[i] = eigVecs.At(i, smallestIdx)
+	}
+
+	util.VecWrite64(eigVec, fileName)
 
 	return
 }
