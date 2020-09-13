@@ -12,7 +12,9 @@ import (
 
 	"github.com/KyungWonPark/C2/internal/calc"
 	"github.com/KyungWonPark/C2/internal/util"
+	"gonum.org/v1/gonum/blas/blas64"
 	"gonum.org/v1/gonum/mat"
+	blas_netlib "gonum.org/v1/netlib/blas/netlib"
 )
 
 func init() {
@@ -64,6 +66,9 @@ func init() {
 }
 
 func main() {
+	// OpenBLAS
+	blas64.Use(blas_netlib.Implementation{})
+
 	// Worker number setting
 	var workerConfig calc.Config
 
