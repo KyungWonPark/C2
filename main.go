@@ -129,7 +129,7 @@ func writeEntireEigenValue(eigVals []float64, fileName string) {
 		log.Fatal(err)
 	}
 	defer f.Close()
-	for i := 0; i < 13362; i++ {
+	for i := range eigVals {
 		var line string
 		line += fmt.Sprintf("%.*e", 6, eigVals[i])
 		fmt.Fprintf(f, "%s\n", line)
@@ -145,11 +145,13 @@ func writeEntireEigenVector(eigVecs *mat.Dense, fileName string) {
 		log.Fatal(err)
 	}
 	defer f.Close()
-	for i := 0; i < 13362; i++ {
+
+	rows, cols := eigVecs.Dims()
+	for i := 0; i < rows; i++ {
 		var line string
-		for j := 0; j < 13362; j++ {
+		for j := 0; j < cols; j++ {
 			line += fmt.Sprintf("%.*e", 6, eigVecs.At(i, j))
-			if j < (13362 - 1) {
+			if j < (cols - 1) {
 				line += ", "
 			}
 		}
